@@ -183,9 +183,23 @@ final class Auth: NSObject, WKHTTPCookieStoreObserver, WKNavigationDelegate, WKU
   nonisolated static func loginNavigation(to url: URL?, isMainFrame: Bool) -> LoginNavigation {
     guard isMainFrame else { return .allow }
     guard let url, let host = url.host?.lowercased() else { return .block }
-    let trusted = ["google.com", "youtube.com"].contains { host == $0 || host.hasSuffix(".\($0)") }
-    if url.scheme == "https", trusted { return .allow }
+    if url.scheme == "https", isGoogleOrYouTube(host) { return .allow }
     return url.scheme == "https" || url.scheme == "http" ? .browser : .block
+  }
+
+  /// youtube.com, google.com and Google's country domains (google.com.au, google.co.uk, google.de), with any
+  /// subdomain. After sign-in Google visits the account's country domain to set its session there too.
+  nonisolated static func isGoogleOrYouTube(_ host: String) -> Bool {
+    let labels = host.split(separator: ".").map(String.init)
+    if labels.suffix(2) == ["youtube", "com"] { return true }
+    guard let google = labels.lastIndex(of: "google") else { return false }
+    let tld = Array(labels[(google + 1)...])
+    let country = { (label: String) in label.count == 2 && label.allSatisfy(\.isLetter) }
+    switch tld.count {
+    case 1: return tld[0] == "com" || country(tld[0])
+    case 2: return (tld[0] == "com" || tld[0] == "co") && country(tld[1])
+    default: return false
+    }
   }
 
   func webView(
@@ -226,12 +240,13 @@ final class Auth: NSObject, WKHTTPCookieStoreObserver, WKNavigationDelegate, WKU
       webView.customUserAgent = Self.webViewUserAgent
       webView.navigationDelegate = self
       webView.uiDelegate = self
-      let window = NSWindow(
+      let window = QuietWindow(
         contentRect: NSRect(x: 0, y: 0, width: 520, height: 720), styleMask: [.titled, .closable, .resizable],
         backing: .buffered, defer: false)
       window.title = "Sign in to YouTube Music"
       window.isReleasedWhenClosed = false
       window.contentView = webView
+      window.initialFirstResponder = webView
       window.delegate = self
       login = (window, Self.loginSnapshot(await store.allCookies()))
       webView.load(URLRequest(url: Self.loginURL))
@@ -327,5 +342,14 @@ enum Keychain {
   static func delete() {
     let status = SecItemDelete(query as CFDictionary)
     if status != errSecSuccess && status != errSecItemNotFound { authLog.error("Keychain delete failed: \(status)") }
+  }
+}
+
+/// A window that doesn't beep at keys its web view passed on. Google's sign-in page handles Enter in script, so
+/// WebKit reports the key as unhandled and AppKit would otherwise beep on every submit.
+final class QuietWindow: NSWindow {
+  override func noResponder(for eventSelector: Selector) {
+    if eventSelector == #selector(NSResponder.keyDown(with:)) { return }
+    super.noResponder(for: eventSelector)
   }
 }
