@@ -51,10 +51,26 @@ function useOnline() {
   return online
 }
 
-/** Cmd-K for search, Cmd-[ and Cmd-] or the mouse side buttons for back and forward. */
+/**
+ * Space plays and pauses, unless you are typing or moved focus with the keyboard, where Space presses the control.
+ * A control focused by a mouse click doesn't count, so Space doesn't replay the row you just clicked.
+ */
+export function spacePlaysOrPauses(e: KeyboardEvent): boolean {
+  if (e.key !== ' ' || e.metaKey || e.ctrlKey || e.altKey || e.repeat) return false
+  const target = e.target instanceof Element ? e.target : null
+  if (target?.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"])')) return false
+  return !target?.matches(':focus-visible')
+}
+
+/** Space to play and pause, Cmd-K for search, Cmd-[ and Cmd-] or the mouse side buttons for back and forward. */
 function useShortcuts() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (spacePlaysOrPauses(e)) {
+        e.preventDefault()
+        void request('player.toggle', {})
+        return
+      }
       if (!e.metaKey) return
       if (e.key === 'k') {
         e.preventDefault()

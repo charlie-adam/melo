@@ -36,7 +36,7 @@ A YouTube Music client for macOS, with a Swift shell, a React UI and YouTube Mus
 - A menu bar panel and a floating mini player.
 - Like songs, save albums, build playlists and subscribe to artists.
 - Light and dark themes that follow the system or stay where you set them.
-- Keyboard first: ⌘K to search, ⌘[ and ⌘] to go back and forward.
+- Keyboard first: Space to play and pause, ⌘K to search, ⌘[ and ⌘] to go back and forward.
 
 ## Screenshots
 
