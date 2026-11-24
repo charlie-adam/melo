@@ -1,7 +1,6 @@
 # CLAUDE.md
 
 Project rules for agents working on Melo, a personal macOS YouTube Music client.
-If `docs/` exists locally (it is git-ignored), read `docs/research.md` before touching auth, InnerTube or playback, and `docs/plan.md` for what comes next.
 
 ## Stack
 
@@ -9,8 +8,7 @@ If `docs/` exists locally (it is git-ignored), read `docs/research.md` before to
   There is no Xcode project.
 - UI: React, Vite and TypeScript in `ui/`, styled with plain CSS.
   No Tailwind and no component library.
-- npm for the UI, on the global mise Node.
-  Do not add a mise pin to this repo: global CLIs live under the global Node, and a pin hides them here.
+- npm for the UI, on Node 20.19+ or 22.12+.
 - TypeScript stays on 6.0.x until typescript-eslint supports a later version.
 
 ## Layout
@@ -37,7 +35,6 @@ If `docs/` exists locally (it is git-ignored), read `docs/research.md` before to
 | `ui/src/screens/`, `ui/src/satellite/` | Screens, and the menu bar and mini player pages |
 | `ui/src/styles/tokens.css` | Design tokens |
 | `scripts/build.sh` | Builds `~/Applications/Melo.app` |
-| `docs/` | Local only, git-ignored: research notes, the plan, and manual checks that need a person |
 
 Self-tests play real music.
 They mute the player page and refuse to run if the mute fails; keep that guard.

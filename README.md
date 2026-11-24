@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/icon/AppIcon.png" width="128" height="128" alt="Melo's app icon">
+
 <h1>Melo</h1>
 
 A YouTube Music client for macOS, with a Swift shell, a React UI and YouTube Music's own player underneath.
@@ -97,9 +99,6 @@ A YouTube Music client for macOS, with a Swift shell, a React UI and YouTube Mus
   </tr>
 </table>
 
-The screenshots show anonymous YouTube Music data and a made-up account.
-The lyrics are placeholder text.
-
 ## Install
 
 ### Download
@@ -108,11 +107,20 @@ The lyrics are placeholder text.
    It runs on macOS 14 or later, on Apple silicon and Intel.
 2. Unzip it and drag Melo to your Applications folder.
 3. Open Melo.
-   Apple hasn't notarised it, so macOS blocks it the first time.
-   Go to System Settings > Privacy & Security and click Open Anyway next to the message about Melo.
-   You only do this once.
-4. Sign in with your own Google account.
+   Apple hasn't notarised it, so macOS says "Melo" Not Opened; click Done.
+4. Open System Settings > Privacy & Security and scroll down to Security.
+   Next to "Melo" was blocked to protect your Mac, click Open Anyway, then confirm with your password or Touch ID.
+5. Click Open Anyway once more in the dialog that follows.
+   macOS remembers this, so later launches open straight away.
+   Each new version you download asks once again.
+6. Sign in with your own Google account.
    YouTube Music Premium removes ads, as it does on music.youtube.com.
+
+If you'd rather use Terminal, this clears the download flag and skips steps 3 to 5:
+
+```sh
+xattr -dr com.apple.quarantine /Applications/Melo.app
+```
 
 Each release also carries a `.sha256` file.
 To check your download, compare it with the output of `shasum -a 256 Melo-<version>.zip`.
@@ -132,6 +140,9 @@ scripts/build.sh
 This builds the UI and a release binary, then assembles `~/Applications/Melo.app`.
 The app serves its UI from its own Resources at `melo://app/`, with no local server.
 Set `MELO_APP` to put the app somewhere else, `MELO_VERSION` to stamp a version, or `MELO_UNIVERSAL=1` for a build that runs on Apple silicon and Intel.
+
+The app icon starts as `assets/icon/AppIcon.svg`.
+After editing it, run `swift scripts/make-icon.swift` from the repo root to regenerate `AppIcon.icns`, which the build copies into the app.
 
 ## Develop
 
@@ -187,27 +198,26 @@ cd ui && npm test && npm run typecheck && npm run lint
 
 The unit tests run offline against committed fixtures.
 
-Three self-tests check the app against the live service, print one line per check, and quit:
+Three self-tests check a built app (`scripts/build.sh`) against the live service, print one line per check, and quit:
 
 | Command | Checks |
 | --- | --- |
-| `MELO_SELFTEST=1 swift run Melo` | InnerTube calls, signed out and, if you're signed in, signed in |
-| `MELO_PLAYER_SELFTEST=<videoId>[,<videoId>] swift run Melo` | Playback, seeking and volume in the hidden player |
-| `MELO_QUEUE_SELFTEST=1 swift run Melo` | Queue advance, repeat, Previous, and save and restore |
+| `MELO_SELFTEST=1 ~/Applications/Melo.app/Contents/MacOS/Melo` | InnerTube calls, signed out and, if you're signed in, signed in |
+| `MELO_PLAYER_SELFTEST=<videoId>[,<videoId>] ~/Applications/Melo.app/Contents/MacOS/Melo` | Playback, seeking and volume in the hidden player |
+| `MELO_QUEUE_SELFTEST=1 ~/Applications/Melo.app/Contents/MacOS/Melo` | Queue advance, repeat, Previous, and save and restore |
 
 The player and queue self-tests play real tracks.
 They mute the player page first and refuse to run if the mute fails.
 
-## Releasing
+## Contributing
 
-Push a version tag:
+Changes go in through pull requests.
+Fork the repo, make your change on a branch, and open a pull request against `main`.
+The CI workflow runs the Swift and UI tests, typecheck, lint and a UI build on every pull request, and they need to pass before a change is merged.
+Please open an issue first for anything large, so we can agree on the approach before you build it.
 
-```bash
-git tag v0.2.0 && git push origin v0.2.0
-```
-
-The release workflow runs the tests, builds a universal `Melo.app` with `scripts/package.sh`, and publishes `Melo-0.2.0.zip` and its `.sha256` as a GitHub release with the notes in `.github/release-notes.md`.
-To build the same zip locally, run `scripts/package.sh 0.2.0`, which writes to `build/`.
+Releases are published by the maintainer: a version tag on `main` runs the release workflow, which tests, builds and publishes the universal app.
+`scripts/package.sh <version>` builds the same zip locally, into `build/`.
 
 ## Privacy and security
 
@@ -215,7 +225,7 @@ You sign in on Google's own page inside the app, and the app never sees your pas
 Your sign-in cookies stay in the app's WebKit data store, with a backup in your login Keychain that never syncs to iCloud.
 The React UI never gets them: Swift makes every YouTube Music request and hands back only the response.
 Song title, artist and length go to lrclib.net when the app looks up lyrics, unless you turn LRCLIB off in Settings.
-Nothing else leaves your Mac except the requests to YouTube Music itself.
+Nothing else leaves your Mac apart from requests to YouTube Music, its image servers and Google's sign-in page.
 Signing out deletes the Keychain backup and the cookies.
 
 [SECURITY.md](SECURITY.md) lists where each piece of data lives and how to report a security problem.
@@ -231,13 +241,17 @@ Signing out deletes the Keychain backup and the cookies.
 | `ui/src/api/` | InnerTube request builders and parsers, with scrubbed fixtures |
 | `ui/src/screens/`, `ui/src/satellite/` | Screens, and the menu bar and mini player pages |
 | `ui/src/styles/tokens.css` | Design tokens for both themes |
-| `scripts/` | `build.sh` and `package.sh` |
+| `scripts/` | `build.sh`, `package.sh`, `make-icon.swift`, and the fixture scrubber |
+| `.github/workflows/` | CI on pull requests, and the release workflow for version tags |
+| `assets/icon/` | The app icon, as SVG and `.icns` |
 | `assets/screenshots/` | README screenshots |
 
 ## Acknowledgements
 
 [Kaset](https://github.com/sozercan/kaset), an MIT-licensed YouTube Music client for macOS, showed how to sign in, call InnerTube and drive the web player.
 This project uses it as a reference, and comments credit it where code follows it closely.
+
+The interface icons come from [Lucide](https://lucide.dev), under the ISC licence.
 
 ## Disclaimer
 

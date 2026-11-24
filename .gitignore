@@ -11,3 +11,4 @@ ui/src/api/__fixtures__/private/
 
 # Local notes: research, plan and manual checks stay out of the repo.
 /docs/
+CLAUDE.local.md
