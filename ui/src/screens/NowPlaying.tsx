@@ -1,6 +1,6 @@
 import { useEffect, useState, type HTMLAttributes, type KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { setLiked, useLiked } from '../actions'
-import type { Item, Song } from '../api/models'
+import type { Item, LikeStatus, Song } from '../api/models'
 import { parseRelated, parseWatchNext } from '../api/parse/watch'
 import { browse, next } from '../api/requests'
 import { Art } from '../components/Art'
@@ -38,7 +38,7 @@ export function NowPlaying({ tab }: { tab: NowPlayingTab }) {
             <Icon name="down" />
           </button>
         </div>
-        {current ? <Current song={current} /> : <EmptyState icon="queue" title="Nothing playing" text="Pick a song to play from anywhere in Melo." />}
+        {current ? <Current song={current} likeStatus={watch?.likeStatus} /> : <EmptyState icon="queue" title="Nothing playing" text="Pick a song to play from anywhere in Melo." />}
       </section>
       <aside className="now-side">
         <div className="seg now-tabs" role="tablist" aria-label="Now playing panels">
@@ -56,8 +56,9 @@ export function NowPlaying({ tab }: { tab: NowPlayingTab }) {
   )
 }
 
-function Current({ song }: { song: Song }) {
-  const liked = useLiked(song)
+function Current({ song, likeStatus }: { song: Song; likeStatus?: LikeStatus }) {
+  // The queue's copy may carry no like status, so the parent's `next` response decides it.
+  const liked = useLiked({ ...song, likeStatus: likeStatus ?? song.likeStatus })
   return (
     <div className="now-current">
       <Art thumbnails={song.thumbnails} size={420} style={{ width: 'var(--now-art)', height: 'var(--now-art)', borderRadius: 'var(--radius-xl)', boxShadow: 'var(--shadow-lg)' }} />

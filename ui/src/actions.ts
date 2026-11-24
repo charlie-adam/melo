@@ -3,11 +3,13 @@
 import { ApiCallError, call } from './api/call'
 import type { Album, ArtistPage, LikeStatus, Playlist, Song } from './api/models'
 import { checkStatus, parseAddedSetVideoId, parseCreatedPlaylistId } from './api/parse/mutation'
+import { parseWatchNext } from './api/parse/watch'
 import * as requests from './api/requests'
 import type { ApiRequest, Privacy } from './api/requests'
 import { confirmExpectation, expectInList, forgetExpectation, recall, remember, useKnown, useKnownMap, type Known, type ListName } from './library'
 import { createStore, useStore } from './store'
 import { toast } from './toasts'
+import { useApi } from './useApi'
 
 /** A playlist the user can add to or remove from. */
 export type PlaylistTarget = Pick<Playlist, 'playlistId' | 'title'>
@@ -67,6 +69,15 @@ export function useLikeStatus(song: Song | undefined): LikeStatus {
 
 /** Whether `song` is in Liked songs, as every view should show it. The player bar uses this too. */
 export const useLiked = (song: Song | undefined) => useLikeStatus(song) === 'LIKE'
+
+/**
+ * `useLiked` for the playing song. Songs in the queue may carry no like status (a restored queue, radio), so this
+ * reads it from `next`, as music.youtube.com does.
+ */
+export function useLikedNow(song: Song | undefined): boolean {
+  const watch = useApi(song ? requests.next(song.videoId) : null, parseWatchNext).data
+  return useLiked(song && { ...song, likeStatus: watch?.likeStatus ?? song.likeStatus })
+}
 
 /** Likes, dislikes or clears a song's rating. */
 export async function rate(song: Song, status: LikeStatus): Promise<void> {

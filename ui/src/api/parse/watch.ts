@@ -51,10 +51,22 @@ export function parseWatchNext(raw: Raw): WatchNext {
     if (id?.startsWith('MPLYt')) result.lyricsBrowseId = id
     if (id?.startsWith('MPTRt')) result.relatedBrowseId = id
   }
-  const actions: Raw[] = raw?.playerOverlays?.playerOverlayRenderer?.actions ?? []
-  const like: LikeStatus | undefined = actions.find((a) => a.likeButtonRenderer)?.likeButtonRenderer.likeStatus
+  const like = overlayLikeStatus(raw?.playerOverlays?.playerOverlayRenderer)
   if (like) result.likeStatus = like
   return result
+}
+
+/**
+ * The playing song's like status. YouTube Music moved it from `actions[].likeButtonRenderer` (still in older
+ * responses) to the action bar's like and dislike view model.
+ */
+function overlayLikeStatus(overlay: Raw): LikeStatus | undefined {
+  const buttons: Raw[] = overlay?.videoActionBar?.videoActionBarViewModel?.buttons ?? []
+  const current: LikeStatus | undefined = buttons
+    .map((b) => b.buttonViewModel?.segmentedLikeDislikeButtonViewModel?.likeButtonViewModel?.likeButtonViewModel?.likeStatusEntity?.likeStatus)
+    .find(Boolean)
+  const actions: Raw[] = overlay?.actions ?? []
+  return current ?? actions.find((a) => a.likeButtonRenderer)?.likeButtonRenderer.likeStatus
 }
 
 /** Parses a radio continuation (`next` with `continuation`). */

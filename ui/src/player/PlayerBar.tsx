@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { setLiked, useLiked } from '../actions'
+import { setLiked, useLikedNow } from '../actions'
 import { request } from '../bridge/client'
 import { Art } from '../components/Art'
 import { ArtistLinks, formatTime, songMenu } from '../components/items'
@@ -40,7 +40,7 @@ export function PlayerBar() {
   const title = current?.title ?? state.title
   const thumbnails = current?.thumbnails ?? (state.artworkUrl ? [{ url: state.artworkUrl }] : [])
   const active = title !== undefined
-  const liked = useLiked(current)
+  const liked = useLikedNow(current)
   const playing = state.status === 'playing' || state.status === 'loading'
   const time = scrub ?? state.currentTime
 

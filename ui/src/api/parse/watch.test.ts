@@ -21,6 +21,19 @@ describe('parseWatchNext', () => {
     expect(next.continuation).toBeUndefined()
   })
 
+  it("reads the like status from the action bar, where YouTube Music now puts it", () => {
+    // Synthetic: the shape of a signed-in response from November 2026, cut down to the like button.
+    const likeButton = { likeButtonViewModel: { likeStatusEntity: { likeStatus: 'LIKE' } } }
+    const raw = {
+      playerOverlays: {
+        playerOverlayRenderer: {
+          videoActionBar: { videoActionBarViewModel: { buttons: [{ buttonViewModel: { segmentedLikeDislikeButtonViewModel: { likeButtonViewModel: likeButton } } }] } },
+        },
+      },
+    }
+    expect(parseWatchNext(raw).likeStatus).toBe('LIKE')
+  })
+
   it('with a radio playlist: 50 items and a radio continuation', () => {
     const radio = parseWatchNext(fixture('next-radio'))
     expect(radio.items).toHaveLength(50)
