@@ -148,7 +148,7 @@ function NextRow({ song, drop, onPlay, onRemove, onMove, drag }: { song: Song; d
   const onKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
     if (e.target !== e.currentTarget) return
     const action =
-      e.key === 'Enter' || e.key === ' '
+      e.key === 'Enter'
         ? onPlay
         : e.key === 'Delete' || e.key === 'Backspace'
           ? onRemove

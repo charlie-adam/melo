@@ -50,15 +50,11 @@ function useOnline() {
   return online
 }
 
-/**
- * Space plays and pauses, unless you are typing or moved focus with the keyboard, where Space presses the control.
- * A control focused by a mouse click doesn't count, so Space doesn't replay the row you just clicked.
- */
+/** Space always plays and pauses, except while typing. Enter still presses a focused control. */
 export function spacePlaysOrPauses(e: KeyboardEvent): boolean {
   if (e.key !== ' ' || e.metaKey || e.ctrlKey || e.altKey || e.repeat) return false
   const target = e.target instanceof Element ? e.target : null
-  if (target?.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"])')) return false
-  return !target?.matches(':focus-visible')
+  return !target?.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"])')
 }
 
 /** Space to play and pause, Cmd-K for search, Cmd-[ and Cmd-] or the mouse side buttons for back and forward. */
@@ -67,6 +63,7 @@ function useShortcuts() {
     const onKey = (e: KeyboardEvent) => {
       if (spacePlaysOrPauses(e)) {
         e.preventDefault()
+        e.stopPropagation()
         void request('player.toggle', {})
         return
       }
@@ -82,10 +79,11 @@ function useShortcuts() {
       if (e.button === 3) goBack()
       if (e.button === 4) goForward()
     }
-    addEventListener('keydown', onKey)
+    // Capture, so a focused row or list can't take Space first (as a click, or a scroll).
+    addEventListener('keydown', onKey, true)
     addEventListener('mouseup', onMouse)
     return () => {
-      removeEventListener('keydown', onKey)
+      removeEventListener('keydown', onKey, true)
       removeEventListener('mouseup', onMouse)
     }
   }, [])
