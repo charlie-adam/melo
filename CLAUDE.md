@@ -59,8 +59,8 @@ scripts/build.sh              # assemble Melo.app
   Add a token there before using a new value.
 - Fonts: Figtree ships through `@fontsource-variable/figtree`.
   The UI loads nothing from Google Fonts or any other CDN at runtime.
-- Title bar: the top 52px of the window belongs to the native title bar, which drags the window and holds the traffic lights.
-  Put nothing interactive there.
+- Title bar: the top 52px of the window belongs to the native title bar, which drags the window and holds the traffic lights and the native back and forward buttons.
+  Put nothing interactive from the UI there.
 - Not for the App Store.
   Do not prepare it for App Store review or notarised distribution.
 

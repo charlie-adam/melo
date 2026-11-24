@@ -100,6 +100,7 @@ final class Bridge: NSObject, WKScriptMessageHandlerWithReply {
     case .libraryBroadcast(let change):
       // Every page applies it, the sender included, so the main window and the satellites agree.
       if let bridge = (NSApp.delegate as? AppDelegate)?.bridge { Task { await bridge.emit(.libraryChanged(change)) } }
+    case .navState(let state): (NSApp.delegate as? AppDelegate)?.navigation.update(state)
     }
     return NSNull()  // Player and queue requests resolve with null.
   }

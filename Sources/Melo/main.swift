@@ -7,6 +7,9 @@ import WebKit
 final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
   var window: NSWindow!
   let bridge = Bridge()
+  lazy var navigation = NavigationButtons { [bridge] direction in
+    Task { await bridge.emit(.navGo(NavGo(direction: direction))) }
+  }
   var uiNavigation: UINavigation!
   var nowPlaying: NowPlaying!  // Queue
 
@@ -86,8 +89,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     window.title = "Melo"
     window.titleVisibility = .hidden
     window.titlebarAppearsTransparent = true
-    // An empty unified toolbar makes the title bar 52pt tall, which centres the traffic lights on the UI's top bar
-    // and lets that strip drag the window.
+    // An empty unified toolbar makes the title bar 52pt tall, which centres the traffic lights on the UI's top bar and
+    // lets that strip drag the window. Back and forward sit on the drag strip beside the traffic lights.
     window.toolbar = NSToolbar(identifier: "Melo")
     window.toolbarStyle = .unified
     window.minSize = NSSize(width: 1000, height: 640)
@@ -102,6 +105,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     strip.autoresizingMask = [.width, .minYMargin]
     strip.scrollTarget = webView
     content.addSubview(strip)
+    navigation.place(on: strip, x: 84)
     window.contentView = content
     window.delegate = self
     window.center()
@@ -171,6 +175,86 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     ])
     NSApp.mainMenu = main
   }
+}
+
+/// Back and forward, small chevrons in the title bar just right of the traffic lights. They send `nav.go` to the
+/// UI, and `nav.state` from the UI enables them. They live on the drag strip, which passes their clicks through.
+@MainActor
+final class NavigationButtons {
+  let back: NSButton
+  let forward: NSButton
+  private var handlers: [ButtonHandler] = []
+
+  init(go: @escaping (NavGo.Direction) -> Void) {
+    func button(_ symbol: String, _ label: String) -> NSButton {
+      let config = NSImage.SymbolConfiguration(pointSize: 13, weight: .semibold)
+      let image = NSImage(systemSymbolName: symbol, accessibilityDescription: label)!.withSymbolConfiguration(config)!
+      let button = HoverButton(image: image, target: nil, action: nil)
+      button.contentTintColor = .secondaryLabelColor
+      button.toolTip = label
+      button.isEnabled = false
+      button.frame.size = NSSize(width: 32, height: 28)
+      return button
+    }
+    back = button("chevron.left", "Back (⌘[)")
+    forward = button("chevron.right", "Forward (⌘])")
+    // NSButton holds its target weakly, so the handlers live here.
+    handlers = [ButtonHandler { go(.back) }, ButtonHandler { go(.forward) }]
+    for (button, handler) in zip([back, forward], handlers) {
+      button.target = handler
+      button.action = #selector(ButtonHandler.fire)
+    }
+  }
+
+  func update(_ state: NavState) {
+    back.isEnabled = state.canGoBack
+    forward.isEnabled = state.canGoForward
+  }
+
+  /// Places both buttons on `strip`, vertically centred, starting `x` points from the left.
+  func place(on strip: NSView, x: CGFloat) {
+    for (index, button) in [back, forward].enumerated() {
+      button.frame.origin = NSPoint(x: x + CGFloat(index) * 34, y: (strip.bounds.height - button.frame.height) / 2)
+      button.autoresizingMask = [.maxXMargin, .minYMargin]
+      strip.addSubview(button)
+    }
+  }
+}
+
+/// A borderless button with a soft rounded background on hover and press, like Finder's title bar buttons.
+private final class HoverButton: NSButton {
+  private var hovering = false { didSet { needsDisplay = true } }
+
+  override init(frame: NSRect) {
+    super.init(frame: frame)
+    isBordered = false
+    imagePosition = .imageOnly
+  }
+
+  required init?(coder: NSCoder) { fatalError("not used") }
+
+  override func updateTrackingAreas() {
+    super.updateTrackingAreas()
+    trackingAreas.forEach(removeTrackingArea)
+    addTrackingArea(NSTrackingArea(rect: bounds, options: [.mouseEnteredAndExited, .activeAlways, .inVisibleRect], owner: self))
+  }
+
+  override func mouseEntered(with event: NSEvent) { hovering = true }
+  override func mouseExited(with event: NSEvent) { hovering = false }
+
+  override func draw(_ dirtyRect: NSRect) {
+    if isEnabled && (hovering || isHighlighted) {
+      NSColor.labelColor.withAlphaComponent(isHighlighted ? 0.14 : 0.08).setFill()
+      NSBezierPath(roundedRect: bounds, xRadius: 7, yRadius: 7).fill()
+    }
+    super.draw(dirtyRect)
+  }
+}
+
+private final class ButtonHandler: NSObject {
+  let action: () -> Void
+  init(_ action: @escaping () -> Void) { self.action = action }
+  @objc func fire() { action() }
 }
 
 /// The top of the window, which the UI keeps free of controls: dragging it moves the window and a double-click does

@@ -54,6 +54,8 @@ export interface Requests {
   // Library: like, save and subscribe state shared by every page.
   /** Swift sends it straight back to every page, the sender included, as `library.changed`. */
   'library.broadcast': { params: LibraryChange; result: null }
+  // Back and forward: the buttons are native, in the title bar; the history lives here.
+  'nav.state': { params: { canGoBack: boolean; canGoForward: boolean }; result: null }
 }
 
 /** Events pushed by Swift. Delivered as `{ name, payload }`. */
@@ -68,6 +70,8 @@ export interface Events {
   'queue.unplayable': { videoId: string; title: string; skipped: boolean }
   'settings.changed': Settings
   'library.changed': LibraryChange // Library
+  /** A title bar button was clicked. */
+  'nav.go': { direction: 'back' | 'forward' }
 }
 
 export type Method = keyof Requests

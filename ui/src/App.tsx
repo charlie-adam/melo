@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { on, request } from './bridge/client'
 import { loadAccount, useAuth } from './auth'
 import { NewPlaylistDialog } from './components/NewPlaylist'
 import { TrackMenu } from './components/TrackMenu'
@@ -11,7 +12,6 @@ import { useNowPlaying } from './player/view'
 import { Rail } from './Rail'
 import { ArtistScreen } from './screens/Artist'
 import { AlbumScreen, PlaylistScreen } from './screens/Collection'
-import { Icon } from './icons'
 import { Home } from './screens/Home'
 import { LibraryScreen } from './screens/Library'
 import { NowPlaying } from './screens/NowPlaying'
@@ -76,8 +76,17 @@ function useShortcuts() {
   }, [])
 }
 
+/** Back and forward live in the native title bar: tell Swift when they can go, and follow its clicks. */
+function useTitlebarNavigation(canGoBack: boolean, canGoForward: boolean) {
+  useEffect(() => {
+    request('nav.state', { canGoBack, canGoForward }).catch(() => {})
+  }, [canGoBack, canGoForward])
+  useEffect(() => on('nav.go', ({ direction }) => (direction === 'back' ? goBack() : goForward())), [])
+}
+
 function Shell({ expired }: { expired: boolean }) {
   const history = useHistory()
+  useTitlebarNavigation(history.index > 0, history.index < history.entries.length - 1)
   const route = history.entries[history.index]
   const nowPlaying = useNowPlaying()
   const online = useOnline()
@@ -93,14 +102,6 @@ function Shell({ expired }: { expired: boolean }) {
     <div className="app">
       <Rail onSettings={() => setSettings(true)} />
       <main className="main">
-        <div className="page-nav">
-          <button type="button" className="ib" aria-label="Back" disabled={history.index === 0} onClick={goBack}>
-            <Icon name="back" />
-          </button>
-          <button type="button" className="ib" aria-label="Forward" disabled={history.index === history.entries.length - 1} onClick={goForward}>
-            <Icon name="forward" />
-          </button>
-        </div>
         {!online && <OfflineBanner />}
         <div className="page" key={`${history.index}${JSON.stringify(route)}`}>
           {expired && <ExpiredBanner />}

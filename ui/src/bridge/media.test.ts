@@ -57,6 +57,20 @@ describe('library messages', () => {
   })
 })
 
+describe('navigation messages', () => {
+  it('posts nav.state and delivers nav.go', async () => {
+    const postMessage = vi.fn().mockResolvedValue(null)
+    fakeWindow.webkit = { messageHandlers: { melo: { postMessage } } }
+    await expect(client.request('nav.state', { canGoBack: true, canGoForward: false })).resolves.toBeNull()
+    expect(postMessage).toHaveBeenCalledWith({ method: 'nav.state', params: { canGoBack: true, canGoForward: false } })
+    const listener = vi.fn()
+    const off = client.on('nav.go', listener)
+    expect(window.melo!.emit({ name: 'nav.go', payload: { direction: 'back' } })).toBe(1)
+    expect(listener).toHaveBeenCalledWith({ direction: 'back' })
+    off()
+  })
+})
+
 describe('content security policy', () => {
   it('allows only YouTube image hosts remotely, and no inline script in the build', () => {
     const csp = contentSecurityPolicy(false)

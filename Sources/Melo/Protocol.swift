@@ -30,6 +30,7 @@ enum Request: Decodable, Equatable {
   case lyricsLrclib(LrclibParams)
   case appShowWindow, appQuit
   case libraryBroadcast(LibraryChange)
+  case navState(NavState)
 
   private enum Keys: String, CodingKey { case method, params }
 
@@ -71,6 +72,7 @@ enum Request: Decodable, Equatable {
     case "app.showWindow": self = .appShowWindow
     case "app.quit": self = .appQuit
     case "library.broadcast": self = .libraryBroadcast(try container.decode(LibraryChange.self, forKey: .params))
+    case "nav.state": self = .navState(try container.decode(NavState.self, forKey: .params))
     default:
       throw DecodingError.dataCorruptedError(forKey: .method, in: container, debugDescription: "Unknown method \(method)")
     }
@@ -95,6 +97,7 @@ enum Event: Encodable, Equatable {
   case queueUnplayable(Unplayable)
   case settingsChanged(AppSettings)
   case libraryChanged(LibraryChange)
+  case navGo(NavGo)
 
   private enum Keys: String, CodingKey { case name, payload }
 
@@ -124,6 +127,9 @@ enum Event: Encodable, Equatable {
     case .libraryChanged(let change):
       try container.encode("library.changed", forKey: .name)
       try container.encode(change, forKey: .payload)
+    case .navGo(let go):
+      try container.encode("nav.go", forKey: .name)
+      try container.encode(go, forKey: .payload)
     }
   }
 }
@@ -393,4 +399,18 @@ struct LibraryChange: Codable, Equatable {
       }
     guard valid else { throw DecodingError.dataCorruptedError(forKey: .key, in: container, debugDescription: "Invalid key") }
   }
+}
+
+// Back and forward. The buttons sit in the native title bar; the history lives in the UI.
+
+/// `nav.state`: whether the UI's history can go back or forward, so the title bar buttons can enable to match.
+struct NavState: Codable, Equatable {
+  let canGoBack: Bool
+  let canGoForward: Bool
+}
+
+/// `nav.go`: a title bar button was clicked.
+struct NavGo: Codable, Equatable {
+  enum Direction: String, Codable { case back, forward }
+  let direction: Direction
 }

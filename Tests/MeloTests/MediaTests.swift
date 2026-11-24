@@ -129,6 +129,19 @@ import Testing
     #expect(try decode(["method": "app.quit", "params": [:]]) == .appQuit)
   }
 
+  @Test func decodesNavStateAndRejectsSatellites() throws {
+    let request = try decode(["method": "nav.state", "params": ["canGoBack": true, "canGoForward": false]])
+    #expect(request == .navState(NavState(canGoBack: true, canGoForward: false)))
+    #expect(throws: DecodingError.self) { try decode(["method": "nav.state", "params": ["canGoBack": true]]) }
+    #expect(!Bridge.satelliteMay(request))
+  }
+
+  @MainActor @Test func encodesNavGo() throws {
+    let event = try #require(try Bridge.json(Event.navGo(NavGo(direction: .back))) as? [String: Any])
+    #expect(event["name"] as? String == "nav.go")
+    #expect((event["payload"] as? [String: Any])?["direction"] as? String == "back")
+  }
+
   @MainActor @Test func encodesSettingsChanged() throws {
     let event = try #require(try Bridge.json(Event.settingsChanged(AppSettings())) as? [String: Any])
     #expect(event["name"] as? String == "settings.changed")
