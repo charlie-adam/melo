@@ -97,6 +97,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     webView.autoresizingMask = [.width, .height]
     content.addSubview(webView)
     content.addSubview(player.webView)
+    // The web view sits under the title bar and would swallow its clicks, so a strip over the top drags the window.
+    let strip = DragStrip(frame: NSRect(x: 0, y: content.bounds.height - DragStrip.height, width: content.bounds.width, height: DragStrip.height))
+    strip.autoresizingMask = [.width, .minYMargin]
+    strip.scrollTarget = webView
+    content.addSubview(strip)
     window.contentView = content
     window.delegate = self
     window.center()
@@ -147,12 +152,41 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
       NSMenuItem(title: "Hide Melo", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h"),
       NSMenuItem(title: "Quit Melo", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"),
     ])
+    // Without these, ⌘C, ⌘V, ⌘A and ⌘Z do nothing in any web view: AppKit routes them through the menu.
+    let redo = NSMenuItem(title: "Redo", action: Selector(("redo:")), keyEquivalent: "z")
+    redo.keyEquivalentModifierMask = [.command, .shift]
+    submenu("Edit", [
+      NSMenuItem(title: "Undo", action: Selector(("undo:")), keyEquivalent: "z"),
+      redo,
+      .separator(),
+      NSMenuItem(title: "Cut", action: #selector(NSText.cut(_:)), keyEquivalent: "x"),
+      NSMenuItem(title: "Copy", action: #selector(NSText.copy(_:)), keyEquivalent: "c"),
+      NSMenuItem(title: "Paste", action: #selector(NSText.paste(_:)), keyEquivalent: "v"),
+      NSMenuItem(title: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a"),
+    ])
     submenu("Window", [
       NSMenuItem(title: "Minimise", action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m"),
       NSMenuItem(title: "Close", action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w"),
       miniPlayerMenuItem(),
     ])
     NSApp.mainMenu = main
+  }
+}
+
+/// The top of the window, which the UI keeps free of controls: dragging it moves the window and a double-click does
+/// what the user chose in System Settings for title bars. Scrolling over it still scrolls the page underneath.
+final class DragStrip: NSView {
+  static let height: CGFloat = 52
+  weak var scrollTarget: NSView?
+
+  override func mouseDown(with event: NSEvent) {
+    guard event.clickCount == 2 else { return window?.performDrag(with: event) ?? () }
+    let action = UserDefaults.standard.string(forKey: "AppleActionOnDoubleClick") ?? "Maximize"
+    if action == "Minimize" { window?.performMiniaturize(nil) } else if action != "None" { window?.zoom(nil) }
+  }
+
+  override func scrollWheel(with event: NSEvent) {
+    scrollTarget?.scrollWheel(with: event)
   }
 }
 
