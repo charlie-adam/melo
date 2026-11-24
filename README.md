@@ -12,6 +12,7 @@ A YouTube Music client for macOS, with a Swift shell, a React UI and YouTube Mus
 ![Swift 6](https://img.shields.io/badge/Swift-6-F05138?logo=swift&logoColor=white)
 ![React 19](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)
+[![MIT licence](https://img.shields.io/badge/licence-MIT-111111)](LICENSE)
 
 **[Download the latest release](../../releases/latest)**
 
@@ -252,6 +253,11 @@ Signing out deletes the Keychain backup and the cookies.
 This project uses it as a reference, and comments credit it where code follows it closely.
 
 The interface icons come from [Lucide](https://lucide.dev), under the ISC licence.
+
+## Licence
+
+Melo is released under the [MIT licence](LICENSE).
+By opening a pull request, you agree that your contribution is released under the same licence.
 
 ## Disclaimer
 
