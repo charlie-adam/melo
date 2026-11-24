@@ -1,0 +1,39 @@
+# Pushing a tag such as v0.2.0 tests Melo, builds a universal Melo.app and publishes it as a GitHub release.
+# The app is ad-hoc signed, not notarised, so the release notes tell people how to open it the first time.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-26
+    steps:
+      # Pinned to a commit, not a moving tag. This is actions/checkout v7.0.1.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Test
+        run: |
+          swift test
+          cd ui
+          npm ci
+          npm run typecheck
+          npm run lint
+          npm test
+
+      - name: Package
+        run: scripts/package.sh "${GITHUB_REF_NAME#v}"
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          gh release create "$GITHUB_REF_NAME" \
+            "build/Melo-$version.zip" "build/Melo-$version.zip.sha256" \
+            --title "Melo $version" \
+            --notes-file .github/release-notes.md

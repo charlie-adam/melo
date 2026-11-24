@@ -1,0 +1,51 @@
+/* The menu bar panel and the mini player. Each page fills its panel, which Swift sizes and rounds to match. */
+.sat-text { flex: 1; min-width: 0; }
+.sat-title, .sat-sub { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sat-title { font-size: 14px; font-weight: 600; }
+.sat-sub { color: var(--muted-fg); font-size: 12.5px; }
+.sat-bar { flex: 1; height: 4px; overflow: hidden; border-radius: 2px; background: var(--muted); }
+.sat-bar.thin { flex: none; height: 3px; }
+.sat-bar div { height: 100%; border-radius: 2px; background: var(--fg); }
+
+/* Menu bar panel: 320 wide (MenuBarItem.size in Satellites.swift). */
+.mb {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  padding: 14px;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.mb-track { display: flex; align-items: center; gap: 12px; }
+.mb-time { display: flex; align-items: center; gap: 8px; color: var(--muted-fg); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.mb-controls { display: flex; align-items: center; justify-content: center; gap: 12px; }
+.mb-controls .ib { color: var(--fg); }
+.mb-controls .ib[aria-pressed='true'] { color: var(--fg); }
+.mb-play {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  background: var(--primary);
+  color: var(--primary-fg);
+}
+.mb-play:disabled { opacity: 0.35; }
+.mb-next { overflow: hidden; padding: 8px 6px 0; border-top: 1px solid var(--border); color: var(--muted-fg); font-size: 12.5px; text-overflow: ellipsis; white-space: nowrap; }
+.mb-menu { display: flex; flex-direction: column; margin: -4px; }
+.mb-row { display: flex; align-items: center; gap: 10px; height: 30px; padding: 0 10px; border-radius: var(--radius-sm); font-size: 13.5px; text-align: left; }
+.mb-row:hover { background: var(--muted); }
+.mb-row span { margin-left: auto; color: var(--muted-fg); font-size: 12px; }
+
+/* Mini player: 380 by 120 (MiniPlayer.size). Controls show on hover. */
+.mini { display: flex; height: 100%; overflow: hidden; box-sizing: border-box; border: 1px solid var(--border); border-radius: var(--radius-xl); }
+.mini .art { border-radius: 0; }
+.mini .art::after { display: none; }
+.mini-body { display: flex; flex: 1; flex-direction: column; justify-content: space-between; min-width: 0; padding: 14px 16px 12px; }
+.mini-controls { display: flex; align-items: center; gap: 4px; margin-left: -6px; opacity: 0; transition: opacity 0.15s; }
+.mini:hover .mini-controls, .mini-controls:focus-within { opacity: 1; }
+.mini-controls .ib { color: var(--fg); }
+.mini-controls .mini-expand { margin-left: auto; color: var(--muted-fg); }

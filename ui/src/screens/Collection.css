@@ -1,0 +1,17 @@
+.collection-header { display: flex; align-items: flex-end; gap: 28px; }
+.collection-meta { display: flex; flex-direction: column; gap: 14px; min-width: 0; padding-bottom: 4px; }
+.collection-kind { color: var(--muted-fg); font-size: 12.5px; font-weight: 500; }
+.collection-title {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow-wrap: anywhere;
+}
+.collection-byline { overflow: hidden; font-size: 13.5px; text-overflow: ellipsis; white-space: nowrap; }
+.collection-byline .strong { font-weight: 600; }
+.collection-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }

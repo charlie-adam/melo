@@ -1,0 +1,80 @@
+/* Melo design tokens, with values from songfall-app/packages/ui/styles/tokens.css.
+   Light on :root, dark when settings.ts puts .dark on <html>: for the Dark theme, or System in dark mode. */
+:root {
+  --bg: oklch(1 0 0);
+  --fg: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --muted: oklch(0.97 0 0);
+  /* 0.53 keeps secondary text at 4.5:1 or better on --muted, where 0.556 fell to 4.3:1. */
+  --muted-fg: oklch(0.53 0 0);
+  --soft-fg: oklch(0.42 0 0);
+  --faint-fg: oklch(0.7 0 0);
+  --border: oklch(0.922 0 0);
+  --border-strong: oklch(0.86 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --primary: oklch(0.145 0 0);
+  --primary-fg: oklch(1 0 0);
+  --accent: oklch(0.53 0.17 255);
+  --side: oklch(0.985 0 0);
+  /* The selected segment of a segmented control: raised above, and lighter than, its --muted track. */
+  --raised: oklch(1 0 0);
+  --overlay: oklch(0.145 0 0 / 40%);
+  --shadow: 0 1px 2px oklch(0 0 0 / 5%), 0 8px 24px -8px oklch(0 0 0 / 12%);
+  --shadow-lg: 0 2px 4px oklch(0 0 0 / 4%), 0 24px 48px -12px oklch(0 0 0 / 22%);
+  --shadow-sm: 0 1px 2px oklch(0 0 0 / 8%);
+  /* Focus halo around text fields, and the hairline that keeps light artwork off a light background. */
+  --field-ring: 0 0 0 3px oklch(0.708 0 0 / 25%);
+  --art-edge: inset 0 0 0 1px oklch(0 0 0 / 6%);
+  /* A button sitting on a --primary surface, such as a toast's action. */
+  --on-primary-tint: oklch(1 0 0 / 12%);
+  --success: oklch(0.44 0.07 135);
+  --success-bg: oklch(0.955 0.022 125);
+  --success-border: oklch(0.86 0.04 130);
+  --danger: oklch(0.52 0.19 27);
+  --danger-bg: oklch(0.97 0.015 27);
+  --danger-border: oklch(0.88 0.05 27);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --sans: 'Figtree Variable', 'Figtree', -apple-system, BlinkMacSystemFont, sans-serif;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-inner: 7px;
+  --radius: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-full: 999px;
+  color-scheme: light;
+}
+:root.dark {
+  --bg: oklch(0.145 0 0);
+  --fg: oklch(0.985 0 0);
+  --card: oklch(0.185 0 0);
+  --muted: oklch(0.235 0 0);
+  --muted-fg: oklch(0.708 0 0);
+  --soft-fg: oklch(0.82 0 0);
+  --faint-fg: oklch(0.45 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --border-strong: oklch(1 0 0 / 18%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-fg: oklch(0.145 0 0);
+  --accent: oklch(0.72 0.13 250);
+  --side: oklch(0.165 0 0);
+  --raised: oklch(0.32 0 0);
+  --overlay: oklch(0 0 0 / 60%);
+  --shadow: 0 1px 2px oklch(0 0 0 / 30%), 0 8px 24px -8px oklch(0 0 0 / 50%);
+  --shadow-lg: 0 2px 4px oklch(0 0 0 / 30%), 0 24px 48px -12px oklch(0 0 0 / 60%);
+  --shadow-sm: 0 1px 2px oklch(0 0 0 / 30%);
+  --field-ring: 0 0 0 3px oklch(0.556 0 0 / 35%);
+  --art-edge: inset 0 0 0 1px oklch(1 0 0 / 6%);
+  --on-primary-tint: oklch(0 0 0 / 8%);
+  --success: oklch(0.82 0.07 135);
+  --success-bg: oklch(0.27 0.03 130);
+  --success-border: oklch(0.38 0.04 130);
+  --danger: oklch(0.75 0.15 25);
+  --danger-bg: oklch(0.25 0.04 25);
+  --danger-border: oklch(0.4 0.08 25);
+  color-scheme: dark;
+}

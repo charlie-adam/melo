@@ -1,0 +1,133 @@
+{
+  "contents": {
+    "singleColumnBrowseResultsRenderer": {
+      "tabs": [
+        {
+          "tabRenderer": {
+            "content": {
+              "sectionListRenderer": {
+                "contents": [
+                  {
+                    "gridRenderer": {
+                      "items": [
+                        {
+                          "musicTwoRowItemRenderer": {
+                            "title": {
+                              "runs": [
+                                {
+                                  "text": "New playlist"
+                                }
+                              ]
+                            },
+                            "navigationEndpoint": {
+                              "createPlaylistEndpoint": {}
+                            }
+                          }
+                        },
+                        {
+                          "musicTwoRowItemRenderer": {
+                            "thumbnailRenderer": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "url": "https://lh3.googleusercontent.com/synthetic=w226-h226",
+                                      "width": 226,
+                                      "height": 226
+                                    }
+                                  ]
+                                }
+                              }
+                            },
+                            "title": {
+                              "runs": [
+                                {
+                                  "text": "Liked music"
+                                }
+                              ]
+                            },
+                            "subtitle": {
+                              "runs": [
+                                {
+                                  "text": "Auto playlist"
+                                }
+                              ]
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseId": "VLLM",
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "MUSIC_PAGE_TYPE_PLAYLIST"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        {
+                          "musicTwoRowItemRenderer": {
+                            "thumbnailRenderer": {
+                              "musicThumbnailRenderer": {
+                                "thumbnail": {
+                                  "thumbnails": [
+                                    {
+                                      "url": "https://lh3.googleusercontent.com/synthetic=w226-h226",
+                                      "width": 226,
+                                      "height": 226
+                                    }
+                                  ]
+                                }
+                              }
+                            },
+                            "title": {
+                              "runs": [
+                                {
+                                  "text": "Synthetic Road Trip"
+                                }
+                              ]
+                            },
+                            "subtitle": {
+                              "runs": [
+                                {
+                                  "text": "Playlist"
+                                },
+                                {
+                                  "text": " • "
+                                },
+                                {
+                                  "text": "12 songs"
+                                }
+                              ]
+                            },
+                            "navigationEndpoint": {
+                              "browseEndpoint": {
+                                "browseId": "VLPLsyntheticplaylist0001",
+                                "browseEndpointContextSupportedConfigs": {
+                                  "browseEndpointContextMusicConfig": {
+                                    "pageType": "MUSIC_PAGE_TYPE_PLAYLIST"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ],
+                      "continuations": [
+                        {
+                          "nextContinuationData": {
+                            "continuation": "synthetic-playlists-token"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

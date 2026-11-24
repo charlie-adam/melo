@@ -1,0 +1,77 @@
+.search { gap: 24px; }
+.search-box { position: relative; max-width: 520px; z-index: 5; }
+.search-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 6px 0 12px;
+  box-sizing: border-box;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--muted-fg);
+}
+.search-field:focus-within { box-shadow: var(--field-ring); }
+.search-field input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: none;
+  color: var(--fg);
+  font-size: 14px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.search-field input::placeholder { color: var(--muted-fg); }
+.search-field input::-webkit-search-cancel-button { display: none; }
+.search-field .clear { width: 22px; height: 22px; border-radius: var(--radius-sm); }
+
+.suggestions {
+  position: absolute;
+  top: 42px;
+  left: 0;
+  right: 0;
+  padding: 5px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  box-shadow: var(--shadow-lg);
+}
+.sg {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+}
+.sg > .icon { color: var(--muted-fg); }
+.sg.item { height: 44px; }
+.sg.hot { background: var(--muted); }
+.sg-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sg-text b { font-weight: 650; }
+.sg-item-text { min-width: 0; }
+.sg-item-text .t2 { font-size: 12px; }
+
+.search-top { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 28px; }
+.top-result {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  background: var(--muted);
+  min-width: 0;
+}
+.top-text { min-width: 0; }
+.top-title { overflow: hidden; font-size: 24px; font-weight: 650; line-height: 1.25; letter-spacing: -0.02em; text-overflow: ellipsis; white-space: nowrap; }
+.top-sub { overflow: hidden; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+.top-actions { display: flex; gap: 8px; padding-top: 2px; }
+.btn.on-muted { background: var(--bg); }
+.btn.on-muted:hover { background: var(--bg); border-color: var(--border-strong); }
+.search-list { display: flex; flex-direction: column; }

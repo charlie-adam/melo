@@ -1,0 +1,25 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  text-align: left;
+}
+.card-text { display: block; min-width: 0; }
+.card:hover .art img { opacity: 0.92; }
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 56px;
+  min-width: 0;
+  padding: 0 8px;
+  border-radius: var(--radius);
+  transition: background 0.15s;
+}
+.row:hover, .row.target { background: var(--muted); }
+.row.off { opacity: 0.45; }
+.row-text { flex: 1; min-width: 0; }
+.is-current { color: var(--accent); }
+.row-aside { flex: none; font-size: 12.5px; color: var(--muted-fg); text-align: right; font-variant-numeric: tabular-nums; }

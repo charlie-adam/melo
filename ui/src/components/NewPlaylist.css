@@ -1,0 +1,35 @@
+.dialog-layer { position: fixed; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; background: var(--overlay); }
+.dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 336px;
+  max-width: calc(100% - 48px);
+  padding: 20px;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg);
+  box-shadow: var(--shadow-lg);
+}
+.dialog-title { font-size: 16px; font-weight: 650; }
+.dialog-field { display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; font-weight: 500; }
+.dialog .field {
+  display: flex;
+  align-items: center;
+  height: 38px;
+  padding: 0 12px;
+  box-sizing: border-box;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+}
+.dialog .field:focus-within { box-shadow: var(--field-ring); }
+.dialog .field input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font-size: 14px; font-weight: 400; }
+.dialog-seg { display: flex; }
+.dialog-seg button { flex: 1; }
+.dialog-seg button[aria-checked='true'] { background: var(--raised); color: var(--fg); box-shadow: var(--shadow-sm); }
+.dialog-seg button:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
+.dialog-note, .dialog-error { font-size: 12.5px; }
+.dialog-note { color: var(--muted-fg); }
+.dialog-error { color: var(--danger); }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 8px; }

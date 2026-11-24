@@ -1,0 +1,16 @@
+.artist-header { display: flex; align-items: center; gap: 28px; }
+.artist-meta { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.artist-name {
+  overflow: hidden;
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.artist-sub { font-size: 13.5px; }
+.artist-top { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 32px; }
+.artist .section { gap: 8px; }
+.artist-n { width: 16px; flex: none; font-size: 13px; text-align: center; }
+.artist-row { width: 100%; text-align: left; }

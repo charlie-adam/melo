@@ -1,0 +1,13 @@
+.build/
+.swiftpm/
+ui/node_modules/
+ui/dist/
+.DS_Store
+ui/src/api/__fixtures__/private/
+*.log
+.env
+.env.*
+/build/
+
+# Local notes: research, plan and manual checks stay out of the repo.
+/docs/

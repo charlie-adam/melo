@@ -1,0 +1,31 @@
+{
+  "responseContext": { "visitorData": "REDACTED" },
+  "contents": [
+    {
+      "addToPlaylistRenderer": {
+        "playlists": [
+          {
+            "playlistAddToOptionRenderer": {
+              "playlistId": "PLsyntheticplaylist0001",
+              "title": { "runs": [{ "text": "Synthetic Road Trip" }] },
+              "privacy": "PRIVATE",
+              "containsSelectedVideos": "ALL",
+              "trackingParams": "REDACTED"
+            }
+          },
+          {
+            "playlistAddToOptionRenderer": {
+              "playlistId": "PLsyntheticplaylist0002",
+              "title": { "runs": [{ "text": "Synthetic Quiet Hours" }] },
+              "privacy": "PRIVATE",
+              "containsSelectedVideos": "NONE",
+              "trackingParams": "REDACTED"
+            }
+          }
+        ],
+        "trackingParams": "REDACTED"
+      }
+    }
+  ],
+  "trackingParams": "REDACTED"
+}

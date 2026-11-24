@@ -1,0 +1,39 @@
+.tracks { display: flex; flex-direction: column; }
+.track {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) 120px 32px 52px 32px;
+  align-items: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 8px;
+  border-radius: var(--radius);
+  transition: background 0.15s;
+}
+.playlist .track { grid-template-columns: 36px minmax(0, 1fr) minmax(0, 0.6fr) 32px 52px 32px; height: 56px; }
+.track:not(.head):hover, .track.target { background: var(--muted); }
+.track.head {
+  height: 32px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  color: var(--muted-fg);
+  font-size: 12px;
+  font-weight: 500;
+}
+.track.off { opacity: 0.45; }
+.track-n { display: flex; justify-content: center; font-size: 13px; }
+.track-title { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.track-text { min-width: 0; }
+.track-extra { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.track-time { text-align: right; font-size: 12.5px; }
+.track .hover-only { opacity: 0; }
+.track:hover .hover-only, .track .hover-only:focus-visible { opacity: 1; }
+.track .liked { color: var(--fg); }
+
+@keyframes eq { 0%, 100% { transform: scaleY(0.35); } 50% { transform: scaleY(1); } }
+.eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 12px; }
+.eq span { width: 3px; height: 12px; border-radius: 1px; background: var(--accent); transform-origin: bottom; transform: scaleY(0.6); }
+.eq.playing span { animation: eq 0.9s ease-in-out infinite; }
+.eq.playing span:nth-child(2) { animation-delay: -0.3s; }
+.eq.playing span:nth-child(3) { animation-delay: -0.6s; }
+@media (prefers-reduced-motion: reduce) { .eq.playing span { animation: none; } }

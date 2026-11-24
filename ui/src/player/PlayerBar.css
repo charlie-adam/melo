@@ -1,0 +1,75 @@
+.player {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 520px minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+  padding: 0 16px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+  position: relative;
+  z-index: 10;
+}
+.player-track { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.player-art { flex: none; border-radius: var(--radius-sm); }
+.player-text { min-width: 0; }
+.player-text .t2 { overflow: hidden; }
+.player .liked { color: var(--fg); }
+
+.player-center { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.player-controls { display: flex; align-items: center; gap: 10px; }
+.player .strong { color: var(--fg); }
+.player .play {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--primary-fg);
+}
+.player .play:disabled { opacity: 0.35; }
+.repeat { position: relative; }
+.repeat-one {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  font-size: 8.5px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.player-progress { display: flex; align-items: center; gap: 10px; width: 100%; font-size: 11.5px; }
+.player-progress .range { flex: 1; }
+.time { width: 32px; flex: none; }
+.time.start { text-align: right; }
+
+.player-tools { display: flex; align-items: center; justify-content: flex-end; gap: 2px; padding-right: 8px; }
+.player-tools .range { margin-left: 2px; }
+
+.range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 14px;
+  margin: 0;
+  background: none;
+}
+.range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to right, var(--fg) var(--pct), var(--border) var(--pct));
+}
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  margin-top: -4px;
+  border-radius: 50%;
+  background: var(--fg);
+  box-shadow: var(--shadow-sm);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.range:hover::-webkit-slider-thumb, .range:focus-visible::-webkit-slider-thumb { opacity: 1; }
+.range:disabled { opacity: 0.6; }

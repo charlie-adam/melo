@@ -1,0 +1,75 @@
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+  padding: 52px 12px 12px;
+  border-right: 1px solid var(--border);
+  background: var(--side);
+}
+
+.rail-nav { display: flex; flex-direction: column; gap: 2px; }
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: var(--radius);
+  color: var(--muted-fg);
+  font-size: 13.5px;
+  font-weight: 500;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+}
+.nav-item:hover, .nav-item[aria-current='page'] { background: var(--muted); color: var(--fg); }
+.nav-label { flex: 1; }
+.nav-key { font-size: 11.5px; }
+
+.rail-head { display: flex; align-items: center; justify-content: space-between; margin: 18px 0 4px; padding: 0 2px 0 10px; }
+.rail-label { color: var(--muted-fg); font-size: 11.5px; font-weight: 600; letter-spacing: 0.02em; }
+.ib.small { width: 26px; height: 26px; }
+
+.rail-playlists { display: flex; flex: 1; flex-direction: column; gap: 2px; min-height: 0; overflow-y: auto; scrollbar-width: none; }
+.rail-playlists::-webkit-scrollbar { display: none; }
+.rail-playlist {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  padding: 0 8px;
+  border-radius: var(--radius);
+  color: var(--soft-fg);
+  font-size: 13px;
+  text-align: left;
+  transition: background 0.15s;
+}
+.rail-playlist:hover, .rail-playlist[aria-current='page'] { background: var(--muted); color: var(--fg); }
+.rail-playlist-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.rail-account {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  margin-bottom: 12px;
+  padding: 0 2px 0 6px;
+}
+.avatar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+.rail-account-text { display: flex; flex: 1; flex-direction: column; min-width: 0; }
+.rail-account-name, .rail-account-sub { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rail-account-name { font-size: 13.5px; font-weight: 600; }
+.rail-account-sub { color: var(--muted-fg); font-size: 12px; }

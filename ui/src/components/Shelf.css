@@ -1,0 +1,22 @@
+.shelf-title { display: flex; flex-direction: column; min-width: 0; }
+.shelf-strapline { color: var(--muted-fg); font-size: 11.5px; font-weight: 600; letter-spacing: 0.02em; }
+
+.shelf-rows, .shelf-cards {
+  display: grid;
+  grid-auto-flow: column;
+  column-gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.shelf-rows::-webkit-scrollbar, .shelf-cards::-webkit-scrollbar { display: none; }
+.shelf-rows { grid-auto-columns: calc((100% - 32px) / 3); }
+.shelf-cards { grid-auto-columns: calc((100% - 80px) / 6); }
+.shelf-rows > *, .shelf-cards > * { scroll-snap-align: start; }
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  column-gap: 16px;
+  row-gap: 22px;
+}
