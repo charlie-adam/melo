@@ -28,6 +28,7 @@ cp "$bin/Melo" "$app/Contents/MacOS/Melo"
 cp -R "$repo/ui/dist" "$app/Contents/Resources/ui"
 # The player scripts (Sources/Melo/Resources), found by Bundle.module under Contents/Resources.
 cp -R "$bin/Melo_Melo.bundle" "$app/Contents/Resources/"
+cp "$repo/assets/icon/AppIcon.icns" "$app/Contents/Resources/AppIcon.icns"
 
 cat > "$app/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -37,6 +38,7 @@ cat > "$app/Contents/Info.plist" <<PLIST
   <key>CFBundleName</key><string>Melo</string>
   <key>CFBundleIdentifier</key><string>com.charlieadam.melo</string>
   <key>CFBundleExecutable</key><string>Melo</string>
+  <key>CFBundleIconFile</key><string>AppIcon</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleShortVersionString</key><string>$version</string>
   <key>CFBundleVersion</key><string>$version</string>

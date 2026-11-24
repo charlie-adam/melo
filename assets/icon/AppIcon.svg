@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Melo's app icon: the disc mark on a dark tile, on Apple's 1024 grid (an 824 body inset 100). -->
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a3a3c"/>
+      <stop offset="1" stop-color="#1c1c1e"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#tile)" filter="url(#shadow)"/>
+  <rect x="101.5" y="101.5" width="821" height="821" rx="183.5" fill="none" stroke="#ffffff" stroke-opacity="0.12" stroke-width="3"/>
+  <path fill="#ffffff" fill-rule="evenodd" d="M512 312a200 200 0 1 0 0 400a200 200 0 1 0 0-400zM512 452a60 60 0 1 1 0 120a60 60 0 1 1 0-120z"/>
+</svg>
