@@ -32,7 +32,7 @@ input { font: inherit; color: inherit; }
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.icon-solid { fill: currentColor; stroke: none; }
+.icon-solid { fill: currentColor; }
 
 .muted { color: var(--muted-fg); }
 .num { font-variant-numeric: tabular-nums; }
