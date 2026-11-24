@@ -31,6 +31,7 @@ enum Request: Decodable, Equatable {
   case appShowWindow, appQuit
   case libraryBroadcast(LibraryChange)
   case navState(NavState)
+  case appCopyLink(CopyLinkParams)
 
   private enum Keys: String, CodingKey { case method, params }
 
@@ -73,6 +74,7 @@ enum Request: Decodable, Equatable {
     case "app.quit": self = .appQuit
     case "library.broadcast": self = .libraryBroadcast(try container.decode(LibraryChange.self, forKey: .params))
     case "nav.state": self = .navState(try container.decode(NavState.self, forKey: .params))
+    case "app.copyLink": self = .appCopyLink(try container.decode(CopyLinkParams.self, forKey: .params))
     default:
       throw DecodingError.dataCorruptedError(forKey: .method, in: container, debugDescription: "Unknown method \(method)")
     }
@@ -404,6 +406,26 @@ struct LibraryChange: Codable, Equatable {
 // Back and forward. The buttons sit in the native title bar; the history lives in the UI.
 
 /// `nav.state`: whether the UI's history can go back or forward, so the title bar buttons can enable to match.
+/// A song's link for the clipboard. Swift builds the URL from a checked video id, so a page can't put any other text
+/// on the clipboard.
+struct CopyLinkParams: Decodable, Equatable {
+  let videoId: String
+
+  init(videoId: String) { self.videoId = videoId }
+
+  init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    videoId = try container.decode(String.self, forKey: .videoId)
+    guard videoId.wholeMatch(of: /[A-Za-z0-9_-]{11}/) != nil else {
+      throw DecodingError.dataCorruptedError(forKey: .videoId, in: container, debugDescription: "Not a video id")
+    }
+  }
+
+  private enum CodingKeys: String, CodingKey { case videoId }
+
+  var url: String { "https://music.youtube.com/watch?v=\(videoId)" }
+}
+
 struct NavState: Codable, Equatable {
   let canGoBack: Bool
   let canGoForward: Bool

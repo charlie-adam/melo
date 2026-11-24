@@ -224,6 +224,7 @@ async function answer(message: Request): Promise<unknown> {
       return lrclib(message.params.durationSec)
     case 'app.showWindow':
     case 'app.quit':
+    case 'app.copyLink':
     case 'nav.state':
       return null
     case 'library.broadcast':

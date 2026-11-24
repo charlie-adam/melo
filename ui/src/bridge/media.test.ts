@@ -71,6 +71,15 @@ describe('navigation messages', () => {
   })
 })
 
+describe('app.copyLink', () => {
+  it('posts only the video id', async () => {
+    const postMessage = vi.fn().mockResolvedValue(null)
+    fakeWindow.webkit = { messageHandlers: { melo: { postMessage } } }
+    await expect(client.request('app.copyLink', { videoId: '_1KDA806Klg' })).resolves.toBeNull()
+    expect(postMessage).toHaveBeenCalledWith({ method: 'app.copyLink', params: { videoId: '_1KDA806Klg' } })
+  })
+})
+
 describe('content security policy', () => {
   it('allows only YouTube image hosts remotely, and no inline script in the build', () => {
     const csp = contentSecurityPolicy(false)

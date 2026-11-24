@@ -97,6 +97,9 @@ final class Bridge: NSObject, WKScriptMessageHandlerWithReply {
     case .lyricsLrclib(let params): return try json(await Lrclib.search(params))
     case .appShowWindow: (NSApp.delegate as? AppDelegate)?.showMainWindow()
     case .appQuit: NSApp.terminate(nil)
+    case .appCopyLink(let params):
+      NSPasteboard.general.clearContents()
+      NSPasteboard.general.setString(params.url, forType: .string)
     case .libraryBroadcast(let change):
       // Every page applies it, the sender included, so the main window and the satellites agree.
       if let bridge = (NSApp.delegate as? AppDelegate)?.bridge { Task { await bridge.emit(.libraryChanged(change)) } }

@@ -136,6 +136,16 @@ import Testing
     #expect(!Bridge.satelliteMay(request))
   }
 
+  @Test func decodesCopyLinkOnlyForAVideoId() throws {
+    let request = try decode(["method": "app.copyLink", "params": ["videoId": "_1KDA806Klg"]])
+    #expect(request == .appCopyLink(CopyLinkParams(videoId: "_1KDA806Klg")))
+    #expect(CopyLinkParams(videoId: "_1KDA806Klg").url == "https://music.youtube.com/watch?v=_1KDA806Klg")
+    for bad in ["", "short", "_1KDA806Klg&x=1", "https://evil.example/"] {
+      #expect(throws: DecodingError.self) { try decode(["method": "app.copyLink", "params": ["videoId": bad]]) }
+    }
+    #expect(!Bridge.satelliteMay(request))
+  }
+
   @MainActor @Test func encodesNavGo() throws {
     let event = try #require(try Bridge.json(Event.navGo(NavGo(direction: .back))) as? [String: Any])
     #expect(event["name"] as? String == "nav.go")

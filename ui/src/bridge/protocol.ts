@@ -51,6 +51,8 @@ export interface Requests {
   /** Brings the main window forward. */
   'app.showWindow': { params: Record<string, never>; result: null }
   'app.quit': { params: Record<string, never>; result: null }
+  /** Puts the song's music.youtube.com link on the clipboard. Swift builds the URL from the id. */
+  'app.copyLink': { params: { videoId: string }; result: null }
   // Library: like, save and subscribe state shared by every page.
   /** Swift sends it straight back to every page, the sender included, as `library.changed`. */
   'library.broadcast': { params: LibraryChange; result: null }

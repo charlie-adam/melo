@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react'
+import { request } from '../bridge/client'
 import { addToPlaylist, newPlaylist, removeFromPlaylist, setLiked, useLiked, type PlaylistTarget } from '../actions'
 import type { Song } from '../api/models'
 import { parseContainingPlaylists } from '../api/parse/mutation'
@@ -150,7 +151,7 @@ function Menu({ song, x, y, playlist, leaving, done }: { song: Song; x: number; 
             icon="link"
             label="Copy link"
             onSelect={() =>
-              void navigator.clipboard.writeText(`https://music.youtube.com/watch?v=${song.videoId}`).then(
+              void request('app.copyLink', { videoId: song.videoId }).then(
                 () => toast('Link copied'),
                 () => toast("Couldn't copy the link."),
               )
