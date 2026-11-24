@@ -1,4 +1,4 @@
-import { useEffect, useState, type HTMLAttributes, type KeyboardEvent as ReactKeyboardEvent } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type HTMLAttributes, type KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { setLiked, useLiked } from '../actions'
 import type { Item, LikeStatus, Song } from '../api/models'
 import { parseRelated, parseWatchNext } from '../api/parse/watch'
@@ -6,9 +6,11 @@ import { browse, next } from '../api/requests'
 import { Art } from '../components/Art'
 import { ArtistLinks, formatTime, itemSubtitle, itemTitle, openItem, playFrom, songMenu, SongRow } from '../components/items'
 import { EmptyState } from '../components/States'
+import { SegThumb } from '../components/SegThumb'
 import { Icon } from '../icons'
 import { navigate } from '../nav/history'
-import { closeNowPlaying, openNowPlaying, type NowPlayingTab } from '../player/view'
+import { motionToken, ms, reducedMotion, usePresence } from '../motion'
+import { closeNowPlaying, openNowPlaying, useNowPlaying, type NowPlayingTab } from '../player/view'
 import { jump, move, remove, setAutoplay, useQueue } from '../queue'
 import { useApi } from '../useApi'
 import { LyricsPanel } from './Lyrics'
@@ -20,7 +22,44 @@ const TABS: { tab: NowPlayingTab; label: string }[] = [
   { tab: 'related', label: 'Related' },
 ]
 
-export function NowPlaying({ tab }: { tab: NowPlayingTab }) {
+/** The full-window player. It slides up from the player bar on open and back down behind it on close. */
+export function NowPlaying() {
+  const { shown, leaving, done } = usePresence(useNowPlaying())
+  return shown ? <Sheet tab={shown} leaving={leaving} done={done} /> : null
+}
+
+/**
+ * Slides the sheet in on mount and out when `leaving`, each from wherever it is drawn now, so closing mid-open (or
+ * the reverse) turns around without a jump. With reduced motion it fades instead.
+ */
+function useSheetMotion(leaving: boolean, done: () => void) {
+  const ref = useRef<HTMLDivElement>(null)
+  const latest = useRef(done)
+  useLayoutEffect(() => {
+    latest.current = done
+  })
+  useLayoutEffect(() => {
+    const el = ref.current!
+    const reduce = reducedMotion()
+    const hidden = reduce ? { opacity: '0' } : { transform: 'translateY(100%)' }
+    const shownFrame = reduce ? { opacity: '1' } : { transform: 'none' }
+    const running = el.getAnimations()
+    const style = getComputedStyle(el)
+    const now = reduce ? { opacity: style.opacity } : { transform: style.transform }
+    running.forEach((a) => a.cancel())
+    const from = leaving || running.length > 0 ? now : hidden
+    const animation = el.animate([from, leaving ? hidden : shownFrame], {
+      duration: ms(el, reduce ? '--dur-fast' : leaving ? '--dur-sheet-out' : '--dur-sheet'),
+      easing: motionToken(el, reduce ? '--ease' : leaving ? '--ease-in-out' : '--spring-smooth'),
+      fill: leaving ? 'forwards' : 'none',
+    })
+    if (leaving) animation.finished.then(() => latest.current(), () => {})
+  }, [leaving])
+  return ref
+}
+
+function Sheet({ tab, leaving, done }: { tab: NowPlayingTab; leaving: boolean; done: () => void }) {
+  const ref = useSheetMotion(leaving, done)
   const { current } = useQueue()
   const watch = useApi(current ? next(current.videoId) : null, parseWatchNext).data
 
@@ -31,7 +70,7 @@ export function NowPlaying({ tab }: { tab: NowPlayingTab }) {
   }, [])
 
   return (
-    <div className="now" role="dialog" aria-label="Now playing">
+    <div ref={ref} className={leaving ? 'now leaving' : 'now'} role="dialog" aria-label="Now playing">
       <section className="now-main">
         <div className="now-bar">
           <button type="button" className="ib" aria-label="Close now playing" onClick={closeNowPlaying}>
@@ -47,10 +86,13 @@ export function NowPlaying({ tab }: { tab: NowPlayingTab }) {
               {t.label}
             </button>
           ))}
+          <SegThumb />
         </div>
-        {tab === 'upnext' && <UpNext />}
-        {tab === 'lyrics' && <LyricsPanel song={current} />}
-        {tab === 'related' && <Related browseId={watch?.relatedBrowseId} loading={current !== undefined && watch === undefined} />}
+        <div className="now-tab" key={tab}>
+          {tab === 'upnext' && <UpNext />}
+          {tab === 'lyrics' && <LyricsPanel song={current} />}
+          {tab === 'related' && <Related browseId={watch?.relatedBrowseId} loading={current !== undefined && watch === undefined} />}
+        </div>
       </aside>
     </div>
   )

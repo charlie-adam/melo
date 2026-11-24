@@ -17,4 +17,9 @@
 .box-item + .box-item { border-top: 1px solid var(--border); }
 .settings-actions { display: flex; flex: none; gap: 8px; }
 .settings .seg button { height: 28px; padding: 0 12px; border-radius: var(--radius-sm); }
-.settings .seg button[aria-checked='true'] { background: var(--raised); color: var(--fg); box-shadow: var(--shadow-sm); }
+.settings .seg button[aria-checked='true'] { color: var(--fg); }
+.settings .seg-thumb { border-radius: var(--radius-sm); }
+/* Open: the dim fades in and the sheet pops from the middle. Close: both fade out, and clicks pass through. */
+.overlay { animation: fade-in var(--dur) var(--ease); }
+.settings { animation: pop-in var(--dur-pop) var(--spring-snappy); }
+.overlay.leaving { animation: fade-out var(--dur-fast) var(--ease) forwards; pointer-events: none; }

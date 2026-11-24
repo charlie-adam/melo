@@ -3,6 +3,7 @@ import type { Item, Song } from '../api/models'
 import { parsePlaylistContinuation, parsePlaylistPage } from '../api/parse/collection'
 import { parseLibrary, parseLibraryContinuation } from '../api/parse/library'
 import { browseContinuation, libraryAlbums, libraryArtists, libraryPlaylists, likedSongs, type ApiRequest } from '../api/requests'
+import { SegThumb } from '../components/SegThumb'
 import { Sentinel } from '../components/Sentinel'
 import { CardGrid } from '../components/Shelf'
 import { EmptyState, LoadError, PageSkeleton } from '../components/States'
@@ -31,6 +32,8 @@ export function LibraryScreen({ tab }: { tab: LibraryTab }) {
             {t.label}
           </button>
         ))}
+        {/* Each tab is its own route, so the screen remounts and the thumb carries over. */}
+        <SegThumb carry="library" />
       </div>
       {tab === 'songs' ? <LikedSongs empty={current.empty} /> : <Grid key={tab} request={current.request()} list={tab === 'artists' ? undefined : tab} empty={current.empty} />}
     </div>

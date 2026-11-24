@@ -34,3 +34,6 @@
   background: var(--on-primary-tint);
   font-weight: 600;
 }
+.toast { animation: toast-in var(--dur-pop) var(--spring-snappy); }
+.toast.leaving { animation: fade-out var(--dur-fast) var(--ease) forwards; pointer-events: none; }
+@keyframes toast-in { from { opacity: 0; transform: translateY(var(--rise)) scale(var(--pop-scale)); } }

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { Song } from '../api/models'
 import { request } from '../bridge/client'
 import { EmptyState } from '../components/States'
+import { reducedMotion } from '../motion'
 import { createLyricsLoader, currentLine, nextLineTime, type LyricLine, type LyricsTrack } from '../lyrics'
 import { usePlayer } from '../player/state'
 import { useSettings } from '../settings'
@@ -47,7 +48,7 @@ export function LyricsPanel({ song }: { song?: Song }) {
   const list = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (at >= 0) list.current?.children[at]?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+    if (at >= 0) list.current?.children[at]?.scrollIntoView({ block: 'center', behavior: reducedMotion() ? 'auto' : 'smooth' })
   }, [at])
 
   if (!song) return <EmptyState icon="lyrics" title="Nothing playing" />

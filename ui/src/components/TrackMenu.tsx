@@ -5,6 +5,7 @@ import { parseContainingPlaylists } from '../api/parse/mutation'
 import { addToPlaylistMenu } from '../api/requests'
 import { Icon, type IconName } from '../icons'
 import { useLibraryPlaylists } from '../library'
+import { usePresence } from '../motion'
 import { navigate } from '../nav/history'
 import { addToQueue, playNext, startRadio } from '../queue'
 import { toast } from '../toasts'
@@ -50,16 +51,19 @@ function Item({ icon, label, onSelect }: { icon: IconName; label: string; onSele
 }
 
 export function TrackMenu() {
-  const request = useTrackMenu()
+  const { shown: request, leaving, done } = usePresence(useTrackMenu())
   if (!request) return null
   // Keyed by song and position so a new request starts with fresh placement and a closed submenu.
-  return <Menu key={`${request.song.videoId}${request.x},${request.y}`} song={request.song} x={request.x} y={request.y} playlist={request.playlist} />
+  return <Menu key={`${request.song.videoId}${request.x},${request.y}`} song={request.song} x={request.x} y={request.y} playlist={request.playlist} leaving={leaving} done={done} />
 }
 
-function Menu({ song, x, y, playlist }: { song: Song; x: number; y: number; playlist?: PlaylistTarget }) {
+/** Grows from the corner nearest the point it opened at, which is the click unless the menu flipped. */
+const origin = (x: number, y: number, at: { left: number; top: number }) => `${x - at.left}px ${y - at.top}px`
+
+function Menu({ song, x, y, playlist, leaving, done }: { song: Song; x: number; y: number; playlist?: PlaylistTarget; leaving: boolean; done: () => void }) {
   const ref = useRef<HTMLDivElement>(null)
   const [pos, setPos] = useState({ left: x, top: y, ready: false })
-  const [sub, setSub] = useState<{ left: number; top: number }>()
+  const [sub, setSub] = useState<{ left: number; top: number; x: number; y: number }>()
   const subRef = useRef<HTMLDivElement>(null)
   const playlists = useLibraryPlaylists().filter((p) => p.playlistId !== 'LM')
   const liked = useLiked(song)
@@ -83,17 +87,18 @@ function Menu({ song, x, y, playlist }: { song: Song; x: number; y: number; play
     const el = subRef.current
     if (!sub || !el) return
     const next = place(sub.left, sub.top, el.offsetWidth, el.offsetHeight, pos.left + 4)
-    if (next.left !== sub.left || next.top !== sub.top) setSub(next)
+    if (next.left !== sub.left || next.top !== sub.top) setSub({ ...sub, ...next })
   }, [sub, pos.left])
 
   const openSub = (target: HTMLElement) => {
     const rect = target.getBoundingClientRect()
-    setSub({ left: rect.right + 4, top: rect.top - 6 })
+    setSub({ left: rect.right + 4, top: rect.top - 6, x: rect.right + 4, y: rect.top - 6 })
   }
 
   return (
     <div
-      className="menu-layer"
+      className={leaving ? 'menu-layer leaving' : 'menu-layer'}
+      onAnimationEnd={(e) => leaving && e.target === e.currentTarget && done()}
       onMouseDown={(e) => e.target === e.currentTarget && closeTrackMenu()}
       onContextMenu={(e) => {
         e.preventDefault()
@@ -106,7 +111,7 @@ function Menu({ song, x, y, playlist }: { song: Song; x: number; y: number; play
         className="menu"
         role="menu"
         aria-label={`${song.title} options`}
-        style={{ left: pos.left, top: pos.top, visibility: pos.ready ? 'visible' : 'hidden' }}
+        style={{ left: pos.left, top: pos.top, visibility: pos.ready ? 'visible' : 'hidden', transformOrigin: origin(x, y, pos) }}
         onKeyDown={moveFocus}
       >
         <Item icon="playNext" label="Play next" onSelect={() => playNext(song)} />
@@ -160,7 +165,7 @@ function Menu({ song, x, y, playlist }: { song: Song; x: number; y: number; play
           className="menu sub"
           role="menu"
           aria-label="Add to playlist"
-          style={{ left: sub.left, top: sub.top }}
+          style={{ left: sub.left, top: sub.top, transformOrigin: origin(sub.x, sub.y, sub) }}
           onKeyDown={(e) => {
             if (e.key === 'ArrowLeft') {
               e.stopPropagation()

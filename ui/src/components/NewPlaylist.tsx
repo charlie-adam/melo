@@ -2,6 +2,8 @@ import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 
 import { closeNewPlaylist, createPlaylist, failureText, useNewPlaylistDialog } from '../actions'
 import type { Song } from '../api/models'
 import type { Privacy } from '../api/requests'
+import { usePresence } from '../motion'
+import { SegThumb } from './SegThumb'
 import { trapFocus } from './trapFocus'
 import './NewPlaylist.css'
 
@@ -12,11 +14,11 @@ const VISIBILITY: { value: Privacy; label: string }[] = [
 ]
 
 export function NewPlaylistDialog() {
-  const request = useNewPlaylistDialog()
-  return request ? <Dialog song={request.song} /> : null
+  const { shown, leaving, done } = usePresence(useNewPlaylistDialog())
+  return shown ? <Dialog song={shown.song} leaving={leaving} done={done} /> : null
 }
 
-function Dialog({ song }: { song?: Song }) {
+function Dialog({ song, leaving, done }: { song?: Song; leaving: boolean; done: () => void }) {
   const [title, setTitle] = useState('')
   const [privacy, setPrivacy] = useState<Privacy>('PRIVATE')
   const [busy, setBusy] = useState(false)
@@ -59,7 +61,11 @@ function Dialog({ song }: { song?: Song }) {
   }
 
   return (
-    <div className="dialog-layer" onMouseDown={(e) => e.target === e.currentTarget && closeNewPlaylist()}>
+    <div
+      className={leaving ? 'dialog-layer leaving' : 'dialog-layer'}
+      onMouseDown={(e) => e.target === e.currentTarget && closeNewPlaylist()}
+      onAnimationEnd={(e) => leaving && e.target === e.currentTarget && done()}
+    >
       <form className="dialog" role="dialog" aria-modal="true" aria-labelledby="new-playlist-title" onSubmit={(e) => void submit(e)} onKeyDown={trapFocus}>
         <h2 id="new-playlist-title" className="dialog-title">
           New playlist
@@ -78,6 +84,7 @@ function Dialog({ song }: { song?: Song }) {
                 {v.label}
               </button>
             ))}
+            <SegThumb />
           </div>
         </div>
         {song && <p className="dialog-note">{song.title} will be its first song.</p>}

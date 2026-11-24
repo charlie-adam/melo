@@ -2,7 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import { signOut, useAccount } from '../auth'
 import type { Settings as SettingsValue, Theme } from '../bridge/protocol'
 import { Art } from '../components/Art'
+import { SegThumb } from '../components/SegThumb'
 import { trapFocus } from '../components/trapFocus'
+import { usePresence } from '../motion'
 import { setAutoplay, useQueue } from '../queue'
 import { setSetting, useSettings } from '../settings'
 import './Settings.css'
@@ -66,7 +68,13 @@ function Account({ onClose }: { onClose: () => void }) {
   )
 }
 
-export function Settings({ onClose }: { onClose: () => void }) {
+/** The Settings sheet pops in over a dimmed window and fades out once closed. */
+export function Settings({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { shown, leaving, done } = usePresence(open || undefined)
+  return shown ? <SettingsDialog leaving={leaving} done={done} onClose={onClose} /> : null
+}
+
+function SettingsDialog({ leaving, done, onClose }: { leaving: boolean; done: () => void; onClose: () => void }) {
   const { theme } = useSettings()
   const { autoplay } = useQueue()
   const dialog = useRef<HTMLDivElement>(null)
@@ -83,7 +91,11 @@ export function Settings({ onClose }: { onClose: () => void }) {
   }, [onClose])
 
   return (
-    <div className="overlay" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+    <div
+      className={leaving ? 'overlay leaving' : 'overlay'}
+      onMouseDown={(e) => e.target === e.currentTarget && onClose()}
+      onAnimationEnd={(e) => leaving && e.target === e.currentTarget && done()}
+    >
       <div ref={dialog} className="settings" role="dialog" aria-modal="true" aria-labelledby="settings-title" tabIndex={-1} onKeyDown={trapFocus}>
         <div className="settings-head">
           <h2 id="settings-title">Settings</h2>
@@ -120,6 +132,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
                       {t.label}
                     </button>
                   ))}
+                  <SegThumb />
                 </div>
               </div>
             </div>

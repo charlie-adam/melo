@@ -8,7 +8,6 @@ import { Toasts } from './components/Toasts'
 import { refreshLibraryPlaylists } from './library'
 import { currentRoute, goBack, goForward, navigate, useHistory, type Route } from './nav/history'
 import { PlayerBar } from './player/PlayerBar'
-import { useNowPlaying } from './player/view'
 import { Rail } from './Rail'
 import { ArtistScreen } from './screens/Artist'
 import { AlbumScreen, PlaylistScreen } from './screens/Collection'
@@ -104,7 +103,6 @@ function Shell({ expired }: { expired: boolean }) {
   const history = useHistory()
   useTitlebarNavigation(history.index > 0, history.index < history.entries.length - 1)
   const route = history.entries[history.index]
-  const nowPlaying = useNowPlaying()
   const online = useOnline()
   const [settings, setSettings] = useState(false)
   useShortcuts()
@@ -126,12 +124,12 @@ function Shell({ expired }: { expired: boolean }) {
           </div>
         </div>
       </main>
-      {nowPlaying && <NowPlaying tab={nowPlaying} />}
+      <NowPlaying />
       <PlayerBar />
       <TrackMenu />
       <NewPlaylistDialog />
       <Toasts />
-      {settings && <Settings onClose={() => setSettings(false)} />}
+      <Settings open={settings} onClose={() => setSettings(false)} />
     </div>
   )
 }

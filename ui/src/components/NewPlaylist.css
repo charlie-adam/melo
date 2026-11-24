@@ -27,9 +27,12 @@
 .dialog .field input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font-size: 14px; font-weight: 400; }
 .dialog-seg { display: flex; }
 .dialog-seg button { flex: 1; }
-.dialog-seg button[aria-checked='true'] { background: var(--raised); color: var(--fg); box-shadow: var(--shadow-sm); }
+.dialog-seg button[aria-checked='true'] { color: var(--fg); }
 .dialog-seg button:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
 .dialog-note, .dialog-error { font-size: 12.5px; }
 .dialog-note { color: var(--muted-fg); }
 .dialog-error { color: var(--danger); }
 .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.dialog-layer { animation: fade-in var(--dur) var(--ease); }
+.dialog { animation: pop-in var(--dur-pop) var(--spring-snappy); }
+.dialog-layer.leaving { animation: fade-out var(--dur-fast) var(--ease) forwards; pointer-events: none; }

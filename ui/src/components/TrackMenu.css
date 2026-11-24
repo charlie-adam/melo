@@ -31,3 +31,5 @@
 .mi .k { display: flex; margin-left: auto; color: var(--muted-fg); font-size: 12px; }
 .mi-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .sep { height: 1px; margin: 5px 4px; background: var(--border); }
+.menu { animation: pop-in var(--dur-pop) var(--spring-snappy); }
+.menu-layer.leaving { animation: fade-out var(--dur-fast) var(--ease) forwards; pointer-events: none; }
